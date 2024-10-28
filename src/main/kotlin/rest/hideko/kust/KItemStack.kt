@@ -1,7 +1,6 @@
 package rest.hideko.kust
 
 import org.bukkit.inventory.ItemStack
-import rest.hideko.tester.KMaterial
 
 class KItemStack(private val kmaterial: KMaterial) {
     private val itemStack = kmaterial.item()
