@@ -36,22 +36,25 @@ class KInventory(private val title: String, row: Int): Listener {
         return this
     }
 
+    // イベントハンドラーの修正
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
         if (event.view.title == title) {
             if (ignoredSlots.contains(event.slot)) return
             event.isCancelled = true
+
+            // KInventoryClickを作成し、slotActionsで登録された関数を呼び出す
             val click = KInventoryClick(event)
             slotActions[event.slot]?.invoke(click)
         }
     }
 
+    // プレイヤーがインベントリを開けるようにする
     fun open(player: Player): KInventory {
         player.openInventory(inventory)
         return this
     }
-
-    class KInventoryClick(private val event: InventoryClickEvent) {
+    class KInventoryClick(val event: InventoryClickEvent) {
         val player: Player
             get() = event.whoClicked as Player
     }
