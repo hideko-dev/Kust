@@ -14,12 +14,11 @@ class KInventory(private val title: String, row: Int): Listener {
     private val inventory = Bukkit.createInventory(null, row * 9, title)
     private val ignoredSlots = mutableSetOf<Int>()
     private val slotActions = mutableMapOf<Int, (KInventoryClick) -> Unit>()
-    private var isRegistered = false  // イベント登録のフラグ
 
     init {
-        if (!isRegistered) {
+        if (!Kust.instance.inventoryRegisterd) {
             Kust.plugin.server.pluginManager.registerEvents(this, Kust.plugin)
-            isRegistered = true  // イベントを一度だけ登録
+            Kust.instance.inventoryRegisterd = true
         }
     }
 

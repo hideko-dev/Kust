@@ -7,10 +7,13 @@ import org.bukkit.plugin.java.JavaPlugin
 class Kust(private val plugin: JavaPlugin) {
     companion object {
         lateinit var plugin: JavaPlugin
+        lateinit var instance: Kust
     }
     init {
         Companion.plugin = plugin
+        instance = this
     }
+    var inventoryRegisterd = false
     fun events(vararg listeners: Listener): Kust {
         for (listener in listeners) {
             plugin.server.pluginManager.registerEvents(listener, plugin)
