@@ -5,6 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import rest.hideko.kust.Kust
@@ -13,9 +14,13 @@ class KInventory(private val title: String, row: Int): Listener {
     private val inventory = Bukkit.createInventory(null, row * 9, title)
     private val ignoredSlots = mutableSetOf<Int>()
     private val slotActions = mutableMapOf<Int, (KInventoryClick) -> Unit>()
+    private var isRegistered = false  // イベント登録のフラグ
 
     init {
-        Kust.plugin.server.pluginManager.registerEvents(this, Kust.plugin)
+        if (!isRegistered) {
+            Kust.plugin.server.pluginManager.registerEvents(this, Kust.plugin)
+            isRegistered = true  // イベントを一度だけ登録
+        }
     }
 
     fun inventory(setup: (Turn) -> Unit): KInventory {
@@ -36,14 +41,18 @@ class KInventory(private val title: String, row: Int): Listener {
         return this
     }
 
-    // イベントハンドラーの修正
+    // イベントハンドラー
     @EventHandler
     fun onInventoryClick(event: InventoryClickEvent) {
+        // タイトルが一致するインベントリの場合のみ処理
         if (event.view.title == title) {
+            // クリックされたスロットが無視されるべきスロットかチェック
             if (ignoredSlots.contains(event.slot)) return
+
+            // クリックイベントを1回だけ処理するためにキャンセル
             event.isCancelled = true
 
-            // KInventoryClickを作成し、slotActionsで登録された関数を呼び出す
+            // KInventoryClickを作成して、対応するアクションを呼び出す
             val click = KInventoryClick(event)
             slotActions[event.slot]?.invoke(click)
         }
@@ -54,6 +63,8 @@ class KInventory(private val title: String, row: Int): Listener {
         player.openInventory(inventory)
         return this
     }
+
+    // KInventoryClickクラスを追加
     class KInventoryClick(val event: InventoryClickEvent) {
         val player: Player
             get() = event.whoClicked as Player
