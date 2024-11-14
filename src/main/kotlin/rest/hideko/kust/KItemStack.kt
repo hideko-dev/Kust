@@ -3,6 +3,7 @@ package rest.hideko.kust
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import org.bukkit.Material
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import java.util.*
@@ -48,13 +49,19 @@ class KItemStack(private val kmaterial: KMaterial) {
         itemStack.itemMeta = itemMeta
         return this
     }
+    fun addFlag(itemFlag: ItemFlag) {
+        itemMeta?.addItemFlags(itemFlag)
+    }
+    fun removeFlag(itemFlag: ItemFlag) {
+        itemMeta?.removeItemFlags(itemFlag)
+    }
     fun isGlowing(glowing: Boolean): KItemStack {
         if (glowing) {
             itemMeta?.addEnchant(org.bukkit.enchantments.Enchantment.LUCK, 1, true)
-            itemMeta?.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS)
+            itemMeta?.addItemFlags(ItemFlag.HIDE_ENCHANTS)
         } else {
             itemMeta?.removeEnchant(org.bukkit.enchantments.Enchantment.LUCK)
-            itemMeta?.removeItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS)
+            itemMeta?.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
         }
         itemStack.itemMeta = itemMeta
         return this
